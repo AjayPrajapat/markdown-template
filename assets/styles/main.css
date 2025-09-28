@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-slate-100 text-slate-900;
+}
+
+.markdown-preview h1 {
+  @apply text-3xl font-bold mt-6 mb-3;
+}
+
+.markdown-preview h2 {
+  @apply text-2xl font-semibold mt-5 mb-2;
+}
+
+.markdown-preview p {
+  @apply mb-3 leading-relaxed;
+}
+
+.markdown-preview pre {
+  @apply bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto;
+}
+
+.markdown-preview code {
+  @apply bg-slate-200 text-slate-800 px-1 rounded;
+}
