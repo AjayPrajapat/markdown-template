@@ -1,8 +1,18 @@
 import OpenAI from 'openai'
 import type { PlaceholderRequestPayload, PlaceholderResponse } from '~/types/ai'
 
+const describePlaceholder = (name: string): string => {
+  if (/_table$/i.test(name) || /_csv$/i.test(name)) {
+    return `${name} (render as a markdown table using pipes)`
+  }
+  if (/_list$/i.test(name) || /_items$/i.test(name)) {
+    return `${name} (render as a bullet list)`
+  }
+  return name
+}
+
 const buildPrompt = (payload: PlaceholderRequestPayload) => {
-  const placeholderList = payload.placeholders.map((name) => `- ${name}`).join('\n')
+  const placeholderList = payload.placeholders.map((name) => `- ${describePlaceholder(name)}`).join('\n')
   const contextEntries = Object.entries(payload.context)
     .map(([key, value]) => `- ${key}: ${value}`)
     .join('\n') || 'No additional context provided.'
@@ -15,6 +25,10 @@ ${payload.template}
 
 The template includes placeholders in double curly braces like {{placeholder}}.
 Fill each placeholder with concise, professional markdown content. Respect markdown syntax and keep tables intact.
+
+Guidance by suffix:
+- Placeholders ending with "_table" or "_csv" must be rendered as markdown tables (| columns | rows |) using the provided CSV context when available.
+- Placeholders ending with "_list" or "_items" should be rendered as bullet lists.
 
 List of placeholders:
 ${placeholderList}

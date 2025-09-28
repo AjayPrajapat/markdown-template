@@ -18,8 +18,17 @@ const compiledMarkdown = computed(() => {
 </script>
 
 <template>
-  <div class="bg-white border border-slate-200 rounded-lg shadow-sm p-6">
-    <h2 class="text-xl font-semibold mb-4 text-slate-800">Live Preview</h2>
-    <div class="markdown-preview prose prose-slate max-w-none" v-html="compiledMarkdown" />
+  <div class="bg-gradient-to-br from-white via-white to-slate-50 border border-slate-200 rounded-2xl shadow-md overflow-hidden">
+    <header class="flex items-center justify-between gap-4 border-b border-slate-200 px-6 py-4 bg-slate-50/60">
+      <div>
+        <h2 class="text-xl font-semibold text-slate-900">Live Markdown Preview</h2>
+        <p class="text-sm text-slate-500">Rendered with enhanced typography and layout-friendly defaults.</p>
+      </div>
+      <span class="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary text-xs font-semibold px-3 py-1">
+        <span class="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+        Auto-formatted
+      </span>
+    </header>
+    <div class="markdown-preview px-6 py-6" v-html="compiledMarkdown" />
   </div>
 </template>

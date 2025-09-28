@@ -6,22 +6,92 @@ body {
   @apply bg-slate-100 text-slate-900;
 }
 
+.markdown-preview {
+  @apply prose prose-slate max-w-none;
+}
+
 .markdown-preview h1 {
-  @apply text-3xl font-bold mt-6 mb-3;
+  @apply text-3xl font-bold mt-6 mb-4 text-slate-900;
 }
 
 .markdown-preview h2 {
-  @apply text-2xl font-semibold mt-5 mb-2;
+  @apply text-2xl font-semibold mt-6 mb-3 text-slate-900;
+}
+
+.markdown-preview h3 {
+  @apply text-xl font-semibold mt-5 mb-2 text-slate-800;
+}
+
+.markdown-preview h4 {
+  @apply text-lg font-semibold mt-4 mb-2 text-slate-700;
 }
 
 .markdown-preview p {
-  @apply mb-3 leading-relaxed;
+  @apply mb-4 leading-relaxed text-slate-700;
+}
+
+.markdown-preview strong {
+  @apply text-slate-900 font-semibold;
+}
+
+.markdown-preview em {
+  @apply text-slate-800;
+}
+
+.markdown-preview ul,
+.markdown-preview ol {
+  @apply ml-6 my-4 space-y-2;
+}
+
+.markdown-preview li {
+  @apply leading-relaxed text-slate-700;
+}
+
+.markdown-preview a {
+  @apply text-primary underline decoration-primary/30 hover:text-primary/80;
+}
+
+.markdown-preview blockquote {
+  @apply border-l-4 border-primary/40 bg-primary/5 px-4 py-3 italic text-slate-700 rounded-r-md my-6;
+}
+
+.markdown-preview hr {
+  @apply border-slate-200 my-10;
 }
 
 .markdown-preview pre {
-  @apply bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto;
+  @apply bg-slate-900 text-slate-100 p-4 rounded-xl overflow-x-auto shadow-inner my-6;
+}
+
+.markdown-preview pre code {
+  @apply bg-transparent text-inherit p-0 rounded-none;
 }
 
 .markdown-preview code {
-  @apply bg-slate-200 text-slate-800 px-1 rounded;
+  @apply bg-slate-200 text-slate-800 px-1.5 py-0.5 rounded-md text-sm;
+}
+
+.markdown-preview table {
+  @apply w-full border-collapse overflow-hidden rounded-xl shadow-sm my-6;
+}
+
+.markdown-preview thead {
+  @apply bg-slate-100 text-slate-700 uppercase text-xs tracking-wide;
+}
+
+.markdown-preview th,
+.markdown-preview td {
+  @apply border border-slate-200 px-4 py-3 text-left align-top;
+}
+
+.markdown-preview tbody tr:nth-child(even) {
+  @apply bg-slate-50;
+}
+
+.markdown-preview img {
+  @apply rounded-xl shadow-sm my-6;
+}
+
+.markdown-preview figcaption {
+  @apply text-sm text-slate-500 mt-2;
 }
