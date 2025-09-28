@@ -1,0 +1,30 @@
+{
+  "name": "markdown-template-editor",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@codemirror/lang-markdown": "^6.2.3",
+    "@pinia/nuxt": "^0.5.1",
+    "@uiw/vue-codemirror": "^4.24.6",
+    "nuxt": "^3.10.3",
+    "openai": "^4.38.2",
+    "pinia": "^2.1.7",
+    "marked": "^9.1.5",
+    "@codemirror/view": "^6.24.1"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config-typescript": "^12.0.0",
+    "@nuxtjs/tailwindcss": "^6.12.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.20.1",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.5",
+    "@tailwindcss/typography": "^0.5.10"
+  }
+}
