@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { shallowRef, watch, defineProps, defineEmits, ref } from 'vue'
+import { keymap } from '@codemirror/view'
 import type { EditorView } from '@codemirror/view'
+import { EditorSelection } from '@codemirror/state'
 
 const props = defineProps<{
   modelValue: string
@@ -13,6 +15,82 @@ const emit = defineEmits<{
 
 const editorValue = ref(props.modelValue)
 const view = shallowRef<EditorView | null>(null)
+
+const listLinePattern = /^(\s*)([-*+]\s|\d+[.)]\s)/
+
+const insertListBullet = (editorView: EditorView) => {
+  const { state } = editorView
+  const main = state.selection.main
+  const line = state.doc.lineAt(main.head)
+
+  const unorderedMatch = line.text.match(/^(\s*)([-*+])\s+/)
+  const orderedMatch = line.text.match(/^(\s*)(\d+)([.)])\s+/)
+  const whitespaceMatch = line.text.match(/^(\s+)/)
+
+  let indent = whitespaceMatch?.[1] ?? ''
+  let bullet = '-'
+
+  if (orderedMatch) {
+    indent = orderedMatch[1]
+    const currentNumber = Number.parseInt(orderedMatch[2], 10)
+    const marker = Number.isNaN(currentNumber) ? orderedMatch[2] : String(currentNumber + 1)
+    bullet = `${marker}${orderedMatch[3]}`
+  } else if (unorderedMatch) {
+    indent = unorderedMatch[1]
+    bullet = unorderedMatch[2]
+  }
+
+  const insert = `\n${indent}${bullet} `
+  const changes = { from: main.from, to: main.to, insert }
+  const cursorPosition = main.from + insert.length
+
+  editorView.dispatch({
+    changes,
+    selection: EditorSelection.cursor(cursorPosition)
+  })
+
+  return true
+}
+
+const insertParagraphBreak = (editorView: EditorView) => {
+  const { state } = editorView
+
+  const transaction = state.changeByRange((range) => {
+    const line = state.doc.lineAt(range.head)
+
+    if (listLinePattern.test(line.text)) {
+      return { range }
+    }
+
+    const isBlankLine = line.text.trim().length === 0
+    const insert = isBlankLine ? '\n' : '\n\n'
+    const from = range.from
+    const to = range.to
+
+    return {
+      changes: { from, to, insert },
+      range: EditorSelection.cursor(from + insert.length)
+    }
+  })
+
+  if (transaction.changes.empty) {
+    return false
+  }
+
+  editorView.dispatch(transaction)
+  return true
+}
+
+const listKeymap = keymap.of([
+  {
+    key: 'Shift-Enter',
+    run: insertListBullet
+  },
+  {
+    key: 'Enter',
+    run: insertParagraphBreak
+  }
+])
 
 watch(
   () => props.modelValue,
@@ -35,7 +113,8 @@ watch(editorValue, (value) => {
 })
 
 const extensions = [
-  (await import('@codemirror/lang-markdown')).markdown()
+  (await import('@codemirror/lang-markdown')).markdown(),
+  listKeymap
 ]
 
 const handleReady = (payload: { view: EditorView }) => {

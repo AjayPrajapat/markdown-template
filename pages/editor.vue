@@ -31,6 +31,58 @@ const handlePlaceholderTypeChange = (name: string, event: Event) => {
   store.setPlaceholderType(name, value)
 }
 
+const insertText = (target: HTMLTextAreaElement, start: number, end: number, insert: string) => {
+  const value = target.value
+  const newValue = value.slice(0, start) + insert + value.slice(end)
+  const cursor = start + insert.length
+  target.value = newValue
+  target.setSelectionRange(cursor, cursor)
+  return newValue
+}
+
+const handleRichTextKeydown = (name: string, event: KeyboardEvent) => {
+  const target = event.target as HTMLTextAreaElement
+  const start = target.selectionStart
+  const end = target.selectionEnd
+
+  if (event.shiftKey && event.key === 'Enter') {
+    event.preventDefault()
+    const value = target.value
+    const lineStart = value.lastIndexOf('\n', Math.max(0, start - 1)) + 1
+    const lineText = value.slice(lineStart, start)
+
+    const unorderedMatch = lineText.match(/^(\s*)([-*+])\s+/)
+    const orderedMatch = lineText.match(/^(\s*)(\d+)([.)])\s+/)
+    const whitespaceMatch = lineText.match(/^(\s+)/)
+
+    let indent = whitespaceMatch?.[1] ?? ''
+    let bullet = '-'
+
+    if (orderedMatch) {
+      indent = orderedMatch[1]
+      const currentNumber = Number.parseInt(orderedMatch[2], 10)
+      const marker = Number.isNaN(currentNumber) ? orderedMatch[2] : String(currentNumber + 1)
+      bullet = `${marker}${orderedMatch[3]}`
+    } else if (unorderedMatch) {
+      indent = unorderedMatch[1]
+      bullet = unorderedMatch[2]
+    }
+
+    const inserted = insertText(target, start, end, `\n${indent}${bullet} `)
+    store.updatePlaceholderValue(name, inserted)
+    return
+  }
+
+  if (!event.shiftKey && event.key === 'Enter') {
+    event.preventDefault()
+    const value = target.value
+    const precedingNewline = start > 0 && value[start - 1] === '\n'
+    const insert = precedingNewline ? '\n' : '\n\n'
+    const inserted = insertText(target, start, end, insert)
+    store.updatePlaceholderValue(name, inserted)
+  }
+}
+
 const hasErrors = computed(() => Object.values(formErrors).some(Boolean))
 
 const finalMarkdown = computed(() => {
@@ -210,6 +262,7 @@ const downloadMarkdown = () => {
                 class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                 rows="3"
                 placeholder="Describe what should go into {{ name }}"
+                @keydown="handleRichTextKeydown(name, $event)"
                 @input="store.updatePlaceholderValue(name, ($event.target as HTMLTextAreaElement).value)"
               />
               <p v-if="formErrors[name]" class="text-xs text-red-500 mt-2">{{ formErrors[name] }}</p>
